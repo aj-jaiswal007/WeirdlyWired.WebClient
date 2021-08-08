@@ -1,11 +1,12 @@
-import React, { Component, MouseEvent } from 'react';
+import { Component, FormEvent } from 'react';
 import "./LoginPage.scss"
 import { TokenResponse } from '../../../interfaces/response/tokenResponse';
-import callApi from '../../../utils/apiCaller';
 import { HOME_URL } from '../../../constants/UrlPaths';
 import { Redirect } from 'react-router-dom';
-import { ACCESS_TOKEN } from '../../../constants/LocalStorageKeys';
-import { CREATE_TOKEN_API, VERIFY_TOKEN_API } from '../../../constants/ApiEndpoints';
+import { REFRESH_TOKEN } from '../../../constants/LocalStorageKeys';
+import { CREATE_TOKEN_API } from '../../../constants/ApiEndpoints';
+import { isTokenValid } from '../../../utils/JwtHelper';
+import { callPublicApi } from '../../../utils/ApiCaller';
 interface IProps { }
 
 interface IState {
@@ -23,8 +24,9 @@ export class LoginPage extends Component<IProps, IState> {
         };
     }
 
-    login(event: MouseEvent<HTMLElement>) {
-        callApi({
+    login(event: FormEvent<HTMLElement>) {
+        event.preventDefault();
+        callPublicApi({
             method: "post",
             endpoint: CREATE_TOKEN_API,
             body: {
@@ -32,7 +34,6 @@ export class LoginPage extends Component<IProps, IState> {
                 password: this.state.password
             },
             onSuccess: (result: TokenResponse) => {
-
                 localStorage.setItem("access", result.access);
                 localStorage.setItem("refresh", result.refresh);
                 this.setState({ isLoggedIn: true });
@@ -52,21 +53,9 @@ export class LoginPage extends Component<IProps, IState> {
         }
     }
     checkIfAlreadyLoggedIn() {
-        let accessToken = localStorage.getItem(ACCESS_TOKEN);
-        if (!accessToken) {
-            return;
+        if (isTokenValid(REFRESH_TOKEN)) {
+            this.setState({ isLoggedIn: true });
         }
-        callApi({
-            method: "post",
-            endpoint: VERIFY_TOKEN_API,
-            body: {
-                token: accessToken
-            },
-            onSuccess: (result: {}) => {
-                console.log("Verify token sucessful");
-                this.setState({ isLoggedIn: true });
-            }
-        });
     }
 
     render() {
@@ -76,25 +65,30 @@ export class LoginPage extends Component<IProps, IState> {
                 :
                 <div className="LoginPage">
                     <div className="LoginBody">
-                        <div className="form-group">
-                            <label htmlFor="loginEmail">Email address</label>
-                            <input
-                                type="email"
-                                className="form-control"
-                                placeholder="Enter username"
-                                onChange={(e) => { this.setState({ username: e.target.value }) }}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="loginPassword">Password</label>
-                            <input
-                                type="password"
-                                className="form-control"
-                                placeholder="Password"
-                                onChange={(e) => { this.setState({ password: e.target.value }) }} />
+                        <form onSubmit={this.login.bind(this)}>
+                            <div className="form-group">
+                                <label htmlFor="loginEmail">Email address</label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Enter username"
+                                    onChange={(e) => { this.setState({ username: e.target.value }) }}
+                                    required={true}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="loginPassword">Password</label>
+                                <input
+                                    type="password"
+                                    className="form-control"
+                                    placeholder="Password"
+                                    onChange={(e) => { this.setState({ password: e.target.value }) }}
+                                    required={true}
+                                />
 
-                        </div>
-                        <button className="btn btn-primary" onClick={this.login.bind(this)}>Login</button>
+                            </div>
+                            <input type="submit" className="btn btn-primary" value="Login" />
+                        </form>
                     </div>
                 </div>
             }

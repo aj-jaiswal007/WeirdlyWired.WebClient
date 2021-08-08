@@ -2,8 +2,9 @@ import { FC } from "react";
 import {
     Redirect
 } from "react-router-dom";
-import { ACCESS_TOKEN } from "../../constants/LocalStorageKeys";
+import { REFRESH_TOKEN } from "../../constants/LocalStorageKeys";
 import { LOGIN_URL } from "../../constants/UrlPaths";
+import { isTokenValid } from "../../utils/JwtHelper";
 
 interface IProps {
     component: any,
@@ -12,10 +13,9 @@ interface IProps {
 
 export const Protected: FC<IProps> = props => {
     const Cmp = props.component;
-    let accessToken = localStorage.getItem(ACCESS_TOKEN);
     return (
         <>
-            {accessToken ? <Cmp /> : <Redirect to={`${LOGIN_URL}?next=${props.next}`} />}
+            {isTokenValid(REFRESH_TOKEN) ? <Cmp /> : <Redirect to={`${LOGIN_URL}?next=${props.next}`} />}
         </>
     );
 };
