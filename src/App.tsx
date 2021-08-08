@@ -15,7 +15,7 @@ import { ChatPage } from './components/pages/ChatPage/ChatPage';
 function App() {
   let CURRENT_URL = CurrentPath();
   return (
-    <div className="App">
+    <div className="App" style={{ background: "#343a40" }}>
       <Router>
         <Switch>
           <Route path={LOGIN_URL}>

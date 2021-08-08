@@ -86,8 +86,8 @@ export async function callApi({
         if (response.status >= 200 && response.status <= 299) {
             return response.json();
         } else if (response.status === 401) {
-            // Unauthorised
-            LogoutClient(CurrentPath());
+            console.warn(response);
+            // LogoutClient(CurrentPath());
         }
         throw Error(response.statusText);
     }).then(onSuccess).catch((error) => {

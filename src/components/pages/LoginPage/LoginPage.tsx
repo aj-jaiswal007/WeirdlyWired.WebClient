@@ -1,12 +1,15 @@
-import { Component, FormEvent } from 'react';
+import { ChangeEvent, Component, FormEvent } from 'react';
 import "./LoginPage.scss"
-import { TokenResponse } from '../../../interfaces/response/tokenResponse';
+import { TokenResponse } from '../../../interfaces/response/ITokenResponse';
 import { HOME_URL } from '../../../constants/UrlPaths';
 import { Redirect } from 'react-router-dom';
 import { REFRESH_TOKEN } from '../../../constants/LocalStorageKeys';
 import { CREATE_TOKEN_API } from '../../../constants/ApiEndpoints';
 import { isTokenValid } from '../../../utils/JwtHelper';
 import { callPublicApi } from '../../../utils/ApiCaller';
+import loginImg from "../../../assets/login.png"
+import { WeirdFormHolder } from '../../common/WeirdFormHolder/WeirdFormHolder';
+import { WeirdForm } from '../../common/WeirdForm/WeirdForm';
 interface IProps { }
 
 interface IState {
@@ -59,41 +62,67 @@ export class LoginPage extends Component<IProps, IState> {
     }
 
     render() {
-        return (
-            <> {this.state.isLoggedIn ?
-                <Redirect to={this.state.nextUrl} />
-                :
-                <div className="LoginPage">
-                    <div className="LoginBody">
-                        <form onSubmit={this.login.bind(this)}>
-                            <div className="form-group">
-                                <label htmlFor="loginEmail">Email address</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="Enter username"
-                                    onChange={(e) => { this.setState({ username: e.target.value }) }}
-                                    required={true}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="loginPassword">Password</label>
-                                <input
-                                    type="password"
-                                    className="form-control"
-                                    placeholder="Password"
-                                    onChange={(e) => { this.setState({ password: e.target.value }) }}
-                                    required={true}
-                                />
-
-                            </div>
-                            <input type="submit" className="btn btn-primary" value="Login" />
-                        </form>
+        if (this.state.isLoggedIn) {
+            return <Redirect to={this.state.nextUrl} />;
+        }
+        let loginForm = <WeirdForm
+            onSubmit={this.login.bind(this)}
+            formElements={[
+                {
+                    type: "text",
+                    placeholder: "Enter username",
+                    onChange: (e: ChangeEvent<HTMLInputElement>) => {
+                        this.setState({ username: e.target.value })
+                    },
+                    required: true,
+                    faIcon: "fa-user"
+                },
+                {
+                    type: "password",
+                    placeholder: "Enter password",
+                    onChange: (e: ChangeEvent<HTMLInputElement>) => {
+                        this.setState({ password: e.target.value })
+                    },
+                    required: true,
+                    faIcon: "fa-lock"
+                }
+            ]}
+            submitButtonText="Login"
+            formFooter={
+                <>
+                    <div className="form-check d-flex mb-0">
+                        <input
+                            className="form-check-input me-2"
+                            type="checkbox"
+                            value=""
+                            id="stayLoggedIn"
+                        />
+                        <label className="form-check-label" htmlFor="stayLoggedIn">
+                            Remember Me
+                        </label>
                     </div>
-                </div>
+                    <div className="text-center text-lg-start mt-2 pt-2">
+                        <p className="small fw-bold mt-0 pt-1 mb-2">Don't have an account? <a href="/register"
+                            className="link-danger">Register</a></p>
+                    </div>
+                </>
+
             }
-            </>
+        />
+
+        return (
+            <WeirdFormHolder
+                weirdForm={loginForm}
+                formTitle="Log In"
+                image={loginImg}
+                backgroundColor="#17a2b8"
+            />
         );
     }
 }
+
+
+
+
+
 
