@@ -56,18 +56,22 @@ export function callPublicApi({
     });
 }
 
-export async function callApi({
-    method,
-    endpoint,
-    body,
-    onSuccess
-}: CallApiParamerters) {
+export async function validateToken() {
     if (!isTokenValid(ACCESS_TOKEN) && !isTokenValid(REFRESH_TOKEN)) {
         return LogoutClient(CurrentPath());
     }
     if (!isTokenValid(ACCESS_TOKEN) && isTokenValid(REFRESH_TOKEN)) {
         await refreshToken();
     }
+}
+
+export async function callApi({
+    method,
+    endpoint,
+    body,
+    onSuccess
+}: CallApiParamerters) {
+    await validateToken()
     let accessToken = localStorage.getItem(ACCESS_TOKEN);
     let requestContent: RequestInit = {
         method: method,
