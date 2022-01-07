@@ -31,17 +31,17 @@ export class ChatPage extends Component<IProps, IState> {
                 this.setState({ chatItems: response.data })
             }
         });
-        let accessToken = localStorage.getItem(ACCESS_TOKEN)
-        this.connectSocket(`chat/?token=${accessToken}`)
+        this.connectSocket();
     }
 
 
-    connectSocket = (path: string) => {
+    connectSocket() {
         if (SOCKET) {
             SOCKET.close(3000, "closed by client");
         }
         validateToken().then(() => {
-            SOCKET = new WebSocket(`${WSBASEURL}/` + path)
+            let accessToken = localStorage.getItem(ACCESS_TOKEN);
+            SOCKET = new WebSocket(`${WSBASEURL}/chat/?token=${accessToken}`)
             this.setupSocket();
             this.clearChat();
         });
