@@ -1,7 +1,5 @@
 import { FC } from "react";
-import {
-    Redirect
-} from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { REFRESH_TOKEN } from "../../constants/LocalStorageKeys";
 import { LOGIN_URL } from "../../constants/UrlPaths";
 import { isTokenValid } from "../../utils/JwtHelper";
@@ -14,16 +12,15 @@ interface IProps {
 
 export const Protected: FC<IProps> = props => {
     const Cmp = props.component;
-    if (!isTokenValid(REFRESH_TOKEN)) {
-        return <Redirect to={`${LOGIN_URL}?next=${props.next}`} />
-    } else {
-        return (
-            <div
-                className="d-flex flex-column"
-                style={{ height: "inherit" }}>
-                <Header />
-                <Cmp />
-            </div>
-        )
-    }
+    const isAuthenticated = !isTokenValid(REFRESH_TOKEN);
+    return isAuthenticated ? (
+        <div
+            className="d-flex flex-column"
+            style={{ height: "inherit" }}>
+            <Header />
+            <Cmp />
+        </div>
+    ) : (
+        <Navigate to={`${LOGIN_URL}?next=${props.next}`} />
+    );
 };

@@ -1,10 +1,10 @@
 import './App.scss';
 import { LoginPage } from './components/pages/LoginPage/LoginPage';
 import {
-  BrowserRouter as Router,
-  Switch,
+  BrowserRouter,
+  Routes,
   Route,
-  Redirect
+  Navigate
 } from "react-router-dom";
 import { HomePage } from './components/pages/HomePage/HomePage';
 import { RegisterPage } from './components/pages/RegisterPage/RegisterPage';
@@ -16,26 +16,16 @@ function App() {
   let CURRENT_URL = CurrentPath();
   return (
     <div className="App" style={{ background: "#343a40" }}>
-      <Router>
-        <Switch>
-          <Route path={LOGIN_URL}>
-            <LoginPage />
-          </Route>
-          <Route path={REGISTER_URL}>
-            <RegisterPage />
-          </Route>
-          <Route path={HOME_URL}>
-            <Protected component={HomePage} next={CURRENT_URL} />
-          </Route>
-          <Route path={CHAT_URL}>
-            <Protected component={ChatPage} next={CURRENT_URL} />
-          </Route>
-          <Route path="/">
-            <Redirect to="/login" />
-          </Route>
-        </Switch>
-      </Router>
-    </div>
+      <BrowserRouter>
+        <Routes>
+          <Route path={LOGIN_URL} element={<LoginPage />} />
+          <Route path={REGISTER_URL} element={<RegisterPage />} />
+          <Route path={HOME_URL} element={<Protected component={HomePage} next={CURRENT_URL} />} />
+          <Route path={CHAT_URL} element={<Protected component={ChatPage} next={CURRENT_URL} />} />
+          <Route path="/" element={<Navigate to="/login" />} />
+        </Routes>
+      </BrowserRouter>
+    </div >
   );
 }
 
