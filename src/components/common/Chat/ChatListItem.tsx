@@ -1,8 +1,12 @@
 import { FC } from "react";
-import { IChatItem } from "../../../interfaces/common/IChatItem";
+import { IChatUser } from "../../../interfaces/common/IChatItem";
 
 
-export const ChatListItem: FC<IChatItem> = props => {
+export const ChatListUser: FC<IChatUser> = props => {
+
+    let displayName = `${props.first_name} ${props.last_name}`.trim();
+    displayName = displayName ? displayName : props.username;
+
     return (
         <li
             className="p-2 border-bottom"
@@ -13,7 +17,7 @@ export const ChatListItem: FC<IChatItem> = props => {
                     {/* <img src="https://mdbootstrap.com/img/Photos/Avatars/avatar-8.jpg" alt="avatar"
                         className="rounded-circle d-flex align-self-center me-3 shadow-1-strong" width="60" /> */}
                     <div className="pt-1">
-                        <p className="fw-bold mb-0">{`${props.first_name} ${props.last_name}`}</p>
+                        <p className="fw-bold mb-0 text-white font-weight-bold">{displayName}</p>
                         <p className="small text-white">No Message</p>
                     </div>
                 </div>

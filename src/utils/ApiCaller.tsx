@@ -91,7 +91,7 @@ export async function callApi({
             return response.json();
         } else if (response.status === 401) {
             console.warn(response);
-            // LogoutClient(CurrentPath());
+            LogoutClient(CurrentPath());
         }
         throw Error(response.statusText);
     }).then(onSuccess).catch((error) => {

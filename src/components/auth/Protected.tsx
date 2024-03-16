@@ -12,7 +12,7 @@ interface IProps {
 
 export const Protected: FC<IProps> = props => {
     const Cmp = props.component;
-    const isAuthenticated = !isTokenValid(REFRESH_TOKEN);
+    const isAuthenticated = isTokenValid(REFRESH_TOKEN);
     return isAuthenticated ? (
         <div
             className="d-flex flex-column"

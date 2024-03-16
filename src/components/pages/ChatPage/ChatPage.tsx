@@ -1,20 +1,22 @@
-import React, { ChangeEvent, Component, KeyboardEvent } from "react";
+import { ChangeEvent, Component, KeyboardEvent } from "react";
 import "./ChatPage.scss"
-import { ChatListItem } from "../../common/Chat/ChatListItem";
-import { IChatItem } from "../../../interfaces/common/IChatItem";
+import { ChatListUser } from "../../common/Chat/ChatListItem";
+import { IChatUser } from "../../../interfaces/common/IChatItem";
 import { callApi, validateToken } from "../../../utils/ApiCaller";
 import { GET_USERS_API } from "../../../constants/ApiEndpoints";
 import { IDataResonse } from "../../../interfaces/response/IDataResponse";
 import { IChatMessage } from "../../../interfaces/common/IChatMessage";
 import { ChatMessage } from "../../common/Chat/ChatMessage";
-import { ACCESS_TOKEN } from "../../../constants/LocalStorageKeys";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../../constants/LocalStorageKeys";
 const WSBASEURL = process.env.REACT_APP_WS_BASE_URL;
 
 interface IProps { }
 var SOCKET: WebSocket | null = null;
 interface IState {
-    chatItems?: Array<IChatItem>,
-    chatMessages?: Array<IChatMessage>,
+    chatMessagesDatabase?: { [key: string]: Array<IChatMessage> },
+    chatUsers?: Array<IChatUser>,
+    currentChatUser?: IChatUser,
+    currentChatMessages?: Array<IChatMessage>,
     messageText?: string
 }
 export class ChatPage extends Component<IProps, IState> {
@@ -24,11 +26,14 @@ export class ChatPage extends Component<IProps, IState> {
         this.state = {};
     }
     componentDidMount(): void {
+        console.log("ChatPage mounted");
+        console.log("Access token: " + localStorage.getItem(ACCESS_TOKEN));
+        console.log("Refresh token: " + localStorage.getItem(REFRESH_TOKEN));
         callApi({
             method: "get",
             endpoint: GET_USERS_API,
-            onSuccess: (response: IDataResonse<Array<IChatItem>>) => {
-                this.setState({ chatItems: response.data })
+            onSuccess: (response: IDataResonse<Array<IChatUser>>) => {
+                this.setState({ chatUsers: response.data })
             }
         });
         this.connectSocket();
@@ -47,13 +52,13 @@ export class ChatPage extends Component<IProps, IState> {
         });
     }
     clearChat() {
-        this.setState({ chatMessages: [] })
+        this.setState({ currentChatMessages: [] })
     }
 
     addMessage(message: IChatMessage) {
-        let messages = this.state.chatMessages;
+        let messages = this.state.currentChatMessages;
         messages?.push(message)
-        this.setState({ chatMessages: messages })
+        this.setState({ currentChatMessages: messages })
     }
     onMessage(event: MessageEvent<any>) {
         console.log(`[message] Data received from server: ${event.data}`);
@@ -67,11 +72,11 @@ export class ChatPage extends Component<IProps, IState> {
         if (!this.state.messageText) {
             return;
         }
-        console.log(this.state.chatItems);
-        if (this.state.chatItems) {
+        console.log(this.state.chatUsers);
+        if (this.state.chatUsers) {
             const msg = JSON.stringify({
                 "content": this.state.messageText,
-                "receiver_id": this.state.chatItems[0].id
+                "receiver_id": this.state.chatUsers[0].id
             })
             this.sendSocketMessage(msg)
         }
@@ -119,10 +124,10 @@ export class ChatPage extends Component<IProps, IState> {
                             <div className="card mask-custom">
                                 <div className="card-body members-panel">
                                     <ul className="list-unstyled mb-0">
-                                        {this.state.chatItems?.map(chatItem => {
+                                        {this.state.chatUsers?.map(chatItem => {
                                             return (
                                                 <div key={chatItem.key}>
-                                                    <ChatListItem {...chatItem} />
+                                                    <ChatListUser {...chatItem} />
                                                 </div>
                                             )
                                         })}
@@ -135,7 +140,7 @@ export class ChatPage extends Component<IProps, IState> {
                         <div className="d-flex flex-column col-md-6 col-lg-7 col-xl-7 chat-panel">
                             <div className="card-body message-panel">
                                 <ul className="list-unstyled text-white">
-                                    {this.state.chatMessages?.map(chatMessage => {
+                                    {this.state.currentChatMessages?.map(chatMessage => {
                                         return <ChatMessage {...chatMessage} />
                                     })}
                                 </ul>

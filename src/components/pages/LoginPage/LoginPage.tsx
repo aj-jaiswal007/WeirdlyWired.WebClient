@@ -51,7 +51,7 @@ export class LoginPage extends Component<IProps, IState> {
     setNextUrl() {
         const params = new URLSearchParams(window.location.search);
         let nextUrl = params.get("next");
-        if (nextUrl) {
+        if (nextUrl != null) {
             this.setState({ nextUrl: nextUrl });
         }
     }
@@ -63,6 +63,8 @@ export class LoginPage extends Component<IProps, IState> {
 
     render() {
         if (this.state.isLoggedIn) {
+            console.log("Is lgged in " + this.state.isLoggedIn);
+            console.log("Navigating to Next URL: " + this.state.nextUrl);
             return <Navigate to={this.state.nextUrl} />;
         }
         let loginForm = <WeirdForm
