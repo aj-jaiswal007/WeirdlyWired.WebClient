@@ -11,11 +11,13 @@ interface CallApiParamerters {
     endpoint: string,
     body?: object,
     onSuccess: any
+    onFailure?: any
 }
 const raiseErrorIfNot2XX = (response: Response) => {
     if (response.status >= 200 && response.status <= 299) {
         return response.json();
     }
+
     throw Error(response.statusText);
 }
 
@@ -43,7 +45,11 @@ export function callPublicApi({
     method,
     endpoint,
     body,
-    onSuccess
+    onSuccess,
+    onFailure = (error: Error) => {
+        console.log("Some error", error)
+
+    },
 }: CallApiParamerters) {
     return fetch(`${BASEURL}${endpoint}`, {
         method: method,
@@ -51,9 +57,7 @@ export function callPublicApi({
             "Content-Type": "application/json"
         },
         body: JSON.stringify(body)
-    }).then(raiseErrorIfNot2XX).then(onSuccess).catch((error) => {
-        console.log("Some error", error)
-    });
+    }).then(raiseErrorIfNot2XX).then(onSuccess).catch(onFailure);
 }
 
 export async function validateToken() {

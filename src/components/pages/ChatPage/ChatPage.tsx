@@ -63,6 +63,7 @@ export class ChatPage extends Component<IProps, IState> {
     onMessage(event: MessageEvent<any>) {
         console.log(`[message] Data received from server: ${event.data}`);
         let r: IChatMessage = JSON.parse(event.data);
+        r.is_me = true;
         this.addMessage(r)
     }
     sendSocketMessage(data: string) {
@@ -72,11 +73,14 @@ export class ChatPage extends Component<IProps, IState> {
         if (!this.state.messageText) {
             return;
         }
+        if (!this.state.currentChatUser) {
+            alert("Please select a user to chat with");
+        }
         console.log(this.state.chatUsers);
         if (this.state.chatUsers) {
             const msg = JSON.stringify({
                 "content": this.state.messageText,
-                "receiver_id": this.state.chatUsers[0].id
+                "receiver_id": this.state.currentChatUser?.id
             })
             this.sendSocketMessage(msg)
         }
@@ -115,18 +119,23 @@ export class ChatPage extends Component<IProps, IState> {
 
 
     render() {
+
         return (
             <section className="gradient-custom">
                 <div className="container py-5 px-0">
                     <div className="row">
                         <div className="col-md-6 col-lg-5 col-xl-5 mb-4 mb-md-0">
-                            <h5 className="font-weight-bold text-center text-white">Friends</h5>
+                            <h5 className="font-weight-bold text-center">Friends</h5>
                             <div className="card mask-custom">
                                 <div className="card-body members-panel">
                                     <ul className="list-unstyled mb-0">
                                         {this.state.chatUsers?.map(chatItem => {
                                             return (
-                                                <div key={chatItem.key}>
+                                                <div key={chatItem.key} onClick={
+                                                    () => {
+                                                        this.setState({ currentChatUser: chatItem });
+                                                    }
+                                                }>
                                                     <ChatListUser {...chatItem} />
                                                 </div>
                                             )
@@ -138,6 +147,9 @@ export class ChatPage extends Component<IProps, IState> {
                         </div>
 
                         <div className="d-flex flex-column col-md-6 col-lg-7 col-xl-7 chat-panel">
+                            <div className="d-flex justify-content-between align-items-center">
+                                {this.state.currentChatUser ? `${this.state.currentChatUser?.username}` : ""}
+                            </div>
                             <div className="card-body message-panel">
                                 <ul className="list-unstyled text-white">
                                     {this.state.currentChatMessages?.map(chatMessage => {
@@ -176,8 +188,8 @@ export class ChatPage extends Component<IProps, IState> {
 
                     </div>
 
-                </div>
-            </section>
+                </div >
+            </section >
         );
     }
 }

@@ -1,7 +1,11 @@
-import { ChangeEvent, Component } from "react";
+import { ChangeEvent, Component, FormEvent } from "react";
 import loginImg from "../../../assets/login.png"
 import { WeirdForm } from "../../common/WeirdForm/WeirdForm";
 import { WeirdFormHolder } from "../../common/WeirdFormHolder/WeirdFormHolder";
+import { callPublicApi } from "../../../utils/ApiCaller";
+import { USER_REGISTER_API } from "../../../constants/ApiEndpoints";
+import { Navigate } from "react-router-dom";
+import { LOGIN_URL } from "../../../constants/UrlPaths";
 interface IProps { }
 
 interface IState {
@@ -19,15 +23,58 @@ export class RegisterPage extends Component<IProps, IState> {
         this.state = {};
     }
 
+    register(event: FormEvent<HTMLElement>) {
+        event.preventDefault();
+        callPublicApi(
+            {
+                method: "post",
+                endpoint: USER_REGISTER_API,
+                body: {
+                    first_name: this.state.firstName,
+                    last_name: this.state.lastName,
+                    email: this.state.email,
+                    username: this.state.userName,
+                    password: this.state.password,
+                    confirm_password: this.state.confirmPassword
+                },
+                onSuccess: (result: any) => {
+                    alert("User registered successfully");
+                    return <Navigate to={LOGIN_URL} />;
+                },
+                onFailure: (error: Error) => {
+                    alert(error.message);
+                }
+            }
+        )
+    }
+
     render() {
         let loginForm = <WeirdForm
-            onSubmit={() => console.log("Register called")}
+            onSubmit={this.register.bind(this)}
             formElements={[
                 {
                     type: "text",
-                    placeholder: "Enter your name",
+                    placeholder: "First name",
                     onChange: (e: ChangeEvent<HTMLInputElement>) => {
                         this.setState({ firstName: e.target.value })
+                    },
+                    required: true,
+                    faIcon: "fa-user"
+                },
+                {
+                    "type": "text",
+                    "placeholder": "Last Name",
+                    "onChange": (e: ChangeEvent<HTMLInputElement>) => {
+                        this.setState({ lastName: e.target.value })
+                    },
+                    "required": true,
+                    "faIcon": "fa-user"
+                },
+                {
+                    type: "text",
+                    placeholder: "Enter username",
+                    onChange: (e: ChangeEvent<HTMLInputElement>) => {
+                        this.setState({ userName: e.target.value })
                     },
                     required: true,
                     faIcon: "fa-user"
