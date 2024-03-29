@@ -2,7 +2,7 @@ import { ChangeEvent, Component, FormEvent } from 'react';
 import "./LoginPage.scss"
 import { TokenResponse } from '../../../interfaces/response/ITokenResponse';
 import { HOME_URL } from '../../../constants/UrlPaths';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { REFRESH_TOKEN } from '../../../constants/LocalStorageKeys';
 import { CREATE_TOKEN_API } from '../../../constants/ApiEndpoints';
 import { isTokenValid } from '../../../utils/JwtHelper';
@@ -51,7 +51,7 @@ export class LoginPage extends Component<IProps, IState> {
     setNextUrl() {
         const params = new URLSearchParams(window.location.search);
         let nextUrl = params.get("next");
-        if (nextUrl) {
+        if (nextUrl != null) {
             this.setState({ nextUrl: nextUrl });
         }
     }
@@ -63,7 +63,9 @@ export class LoginPage extends Component<IProps, IState> {
 
     render() {
         if (this.state.isLoggedIn) {
-            return <Redirect to={this.state.nextUrl} />;
+            console.log("Is lgged in " + this.state.isLoggedIn);
+            console.log("Navigating to Next URL: " + this.state.nextUrl);
+            return <Navigate to={this.state.nextUrl} />;
         }
         let loginForm = <WeirdForm
             onSubmit={this.login.bind(this)}

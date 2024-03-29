@@ -4,4 +4,5 @@ export interface IChatMessage {
     content: number,
     receiver_id: number,
     receiver_type: number,
+    is_me: boolean
 }

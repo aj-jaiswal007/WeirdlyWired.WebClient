@@ -1,33 +1,46 @@
 .gradient-custom {
     /* fallback for old browsers */
-    background: #fccb90;
+    background: #ffffff;
     /* Chrome 10-25, Safari 5.1-6 */
-    background: -webkit-linear-gradient(to bottom right, rgba(0, 0, 0, 1), #343a40);
+    // background: -webkit-linear-gradient(to bottom right, rgba(0, 0, 0, 1), #343a40);
     /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    background: linear-gradient(to bottom right, rgba(0, 0, 0, 1), #343a40);
+    // background: linear-gradient(to bottom right, rgba(0, 0, 0, 1), #343a40);
     flex: 1;
+
     .members-panel {
         height: 75vh;
         overflow-y: scroll;
         scrollbar-width: thin;
     }
+
     .chat-panel {
         height: 80vh;
+
         .message-panel {
             overflow-y: scroll;
         }
     }
+
     li {
-         :hover {
+        :hover {
             background: gray;
         }
     }
+
     .mask-custom {
-        background: rgba(24, 24, 16, .2);
-        border-radius: 20px 5px 5px 20px;
+        background: rgb(0, 107, 128);
         backdrop-filter: blur(15px);
         border: 2px solid rgba(255, 255, 255, 0.05);
         background-clip: padding-box;
         box-shadow: 10px 10px 10px rgba(46, 54, 68, 0.03);
+    }
+
+    .bubble-left {
+        border-radius: 20px 5px 5px 20px;
+
+    }
+
+    .bubble-right {
+        border-radius: 5px 20px 20px 5px;
     }
 }
