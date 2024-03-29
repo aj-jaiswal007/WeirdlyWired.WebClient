@@ -1,5 +1,4 @@
 import { Buffer } from "buffer";
-import { ACCESS_TOKEN } from "../constants/LocalStorageKeys";
 
 export function isTokenValid(token_key: string) {
     const token = localStorage.getItem(token_key);
