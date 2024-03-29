@@ -18,3 +18,7 @@ Following mapping was used, this will eventually replace an LLM text-to-text API
     "i am making eggs": "I'm cooking meth bruh!",
 }
 ```
+
+## Backend
+
+Backend code at [link](https://github.com/aj-jaiswal007/WeirdlyWired.CoreAPIs)
