@@ -9,10 +9,10 @@ It's just a funny project came to my mind, just trying to convert that idea into
 ## Demo
 
 Funny mode to try with friends 🤐.
-![](https://www.youtube.com/embed/4KI36T4qfpk?si=OJNuyJWMS78RgbE3)
+![](https://www.youtube.com/watch?v=4KI36T4qfpk)
 
 Polite mode to try with colleagues 😂.
-![](https://www.youtube.com/embed/4KI36T4qfpk?si=OJNuyJWMS78RgbE3)
+![](https://www.youtube.com/watch?v=r4Dcg7pMFWI)
 
 - Currently, we are using google's gemini API for text to speech conversion.
 - The idea is to do it via open-source fine tuned LLM Calls with different personas.
